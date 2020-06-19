@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>作业管理系统</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/js/axquery.js"></script>
+    <script type="text/javascript" src="/layui/layui.all.js"></script>
+    <script type="text/javascript" src="/wangEditor/release/wangEditor.js"></script>
+
+    <style>
+        .examination {
+        }
+
+        .examination-item {
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            box-shadow: 1px 1px 1px 1px #eeeeee;
+            margin-top: 15px;
+        }
+
+        .item-label {
+            padding: 0px 10px;
+        }
+
+        .item-a {
+            position: absolute;
+            right: 10px
+        }
+
+        .item {
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            box-shadow: 1px 1px 5px 3px #eeeeee;
+        }
+
+        h2 {
+            padding-left: 10px;
+            padding-bottom: 5px;
+        }
+
+        .top-li {
+            padding-right: 10px;
+        }
+
+        .top-li li {
+            padding: 5px 10px;
+            border: 1px solid #e2e2e2;
+        }
+
+        .top-li li a:hover {
+            color: #009E94;
+        }
+
+        i {
+            margin-right: 10px;
+        }
+
+        .item-label {
+            padding: 0px 10px;
+        }
+
+        h2 {
+            padding-left: 10px;
+            padding-bottom: 5px;
+        }
+
+        .tt {
+            color: #797676;
+            margin-top: 10px;
+            position: relative;
+            border-bottom: 1px solid #e2e2e2;
+            padding-bottom: 15px;
+        }
+
+        .content {
+            padding: 10px;
+            margin-top: 10px;
+            min-height: 150px;
+        }
+
+        blockquote {
+            display: block;
+            border-left: 8px solid #d0e5f2;
+            padding: 5px 10px;
+            margin: 10px 0;
+            line-height: 1.4;
+            font-size: 100%;
+            background-color: #f1f1f1;
+        }
+
+        .content p {
+
+        }
+
+        .w-e-text-container {
+            height: 400px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+        }
+    </style>
+</head>
+<body>
+<nav class="layui-layout layui-layout-admin">
+    <div th:replace="/student/head :: myfooter"></div>
+
+    <div class="layui-container" style="margin-top: 30px; margin-bottom: 100px">
+        <div class="layui-row">
+            <div class="layui-col-md12" style="padding: 5px">
+                <div class="layui-col-md12">
+                    <div class="layui-bg-green item" style="padding: 10px">
+                        <i class="layui-icon">&#xe663;</i>我的作业
+                    </div>
+                </div>
+                <div class="layui-col-md12" style="margin-top: 20px">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="110">
+                            <col>
+                            <col width="150">
+                            <col width="150">
+                            <col width="70">
+                            <col width="200">
+                            <col width="70">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>作业编号</th>
+                            <th>作业标题</th>
+                            <th>发布老师</th>
+                            <th>发布时间</th>
+                            <th>分数</th>
+                            <th>评语</th>
+                            <th> - </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${stuHomeworkList}">
+                            <td th:text="${item.homeworkId}"></td>
+                            <td th:text="${item.homework.title}"></td>
+                            <td th:text="${item.teacher.name}"></td>
+                            <td th:text="${#dates.format(item.homework.issueTime, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:text="${item.score}"></td>
+                            <td th:text="${item.comment}"></td>
+                            <td th:if="${item.isCorrect == false}">
+                                <a class="layui-btn layui-btn-xs"
+                                   th:href="'/student/homework/edit/' + ${item.id} + '.html'">修改</a>
+                            </td>
+                            <td th:if="${item.isCorrect == true}">
+                                <a class="layui-btn layui-btn-xs layui-btn-disabled">修改</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

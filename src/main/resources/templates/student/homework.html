@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>作业管理系统</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/js/axquery.js"></script>
+    <script type="text/javascript" src="/layui/layui.all.js"></script>
+    <script type="text/javascript" src="/wangEditor/release/wangEditor.js"></script>
+
+    <style>
+        .examination {
+        }
+
+        .examination-item {
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            box-shadow: 1px 1px 1px 1px #eeeeee;
+            margin-top: 15px;
+        }
+
+        .item-label {
+            padding: 0px 10px;
+        }
+
+        .item-a {
+            position: absolute;
+            right: 10px
+        }
+
+        .item {
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            box-shadow: 1px 1px 5px 3px #eeeeee;
+        }
+
+        h2 {
+            padding-left: 10px;
+            padding-bottom: 5px;
+        }
+
+        .top-li {
+            padding-right: 10px;
+        }
+
+        .top-li li {
+            padding: 5px 10px;
+            border: 1px solid #e2e2e2;
+        }
+
+        .top-li li a:hover {
+            color: #009E94;
+        }
+
+        i {
+            margin-right: 10px;
+        }
+
+        .item-label {
+            padding: 0px 10px;
+        }
+
+        h2 {
+            padding-left: 10px;
+            padding-bottom: 5px;
+        }
+
+        .tt {
+            color: #797676;
+            margin-top: 10px;
+            position: relative;
+            border-bottom: 1px solid #e2e2e2;
+            padding-bottom: 15px;
+        }
+
+        .content {
+            padding: 10px;
+            margin-top: 10px;
+            min-height: 150px;
+        }
+
+        blockquote {
+            display: block;
+            border-left: 8px solid #d0e5f2;
+            padding: 5px 10px;
+            margin: 10px 0;
+            line-height: 1.4;
+            font-size: 100%;
+            background-color: #f1f1f1;
+        }
+
+        .content p {
+
+        }
+
+        .w-e-text-container {
+            height: 400px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+        }
+    </style>
+</head>
+<body>
+<nav class="layui-layout layui-layout-admin">
+    <div th:replace="/student/head :: myfooter"></div>
+
+    <div class="layui-container" style="margin-top: 30px; margin-bottom: 100px">
+        <div class="layui-row">
+            <div class="layui-col-md12" style="padding: 5px">
+                <div class="layui-col-md12">
+                    <div class="layui-bg-green item" style="padding: 10px">
+                        <i class="layui-icon">&#xe663;</i>作业详情
+                    </div>
+                </div>
+                <div class="layui-col-md12" style="margin-top: 20px">
+                    <h2>
+                        <i class="layui-icon">&#xe66e;</i><label th:text="${homework.title}"></label>
+                    </h2>
+                    <div class="tt">
+                        <label class="item-label" style="border-right: 1px solid #797676"
+                               th:text="'发布者：' + ${homework.teacher.name}">
+                        </label>
+                        <label class="item-label"
+                               th:text="'发布时间：' + ${#dates.format(homework.issueTime, 'yyyy-MM-dd HH:mm')}">
+                        </label>
+                        <div class="content" th:utext="${homework.content}"></div>
+                    </div>
+                </div>
+                <div class="layui-col-md12" style="margin-top: 30px">
+                    <div class="layui-form" action="">
+                        <div class="layui-form-item" style="display: none">
+                            <div class="layui-input-block">
+                                <input type="text" name="homeworkId" th:value="${homework.id}" required lay-verify="required"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 5px">
+                            <strong>
+                                <label style="color: red; margin-right: 5px">*</label>提交作业
+                            </strong>
+                        </div>
+                        <div id="editor" class="col-md-12" style="margin-bottom: 30px"></div>
+                        <div class="layui-form-item" style="margin-top: 30px;">
+                            <div class="layui-input-block" style="text-align: right">
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="add">提交</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div id="dialog" style="padding: 30px; display: none; text-align: center;">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header" style="color: #444">作业已提交</div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+    // 自定义菜单配置
+    editor.customConfig.menus = [
+        'head',  // 标题
+        'bold',  // 粗体
+        'fontSize',  // 字号
+        'fontName',  // 字体
+        'italic',  // 斜体
+        'underline',  // 下划线
+        'strikeThrough',  // 删除线
+        'foreColor',  // 文字颜色
+        'backColor',  // 背景颜色
+        'link',  // 插入链接
+        'list',  // 列表
+        'justify',  // 对齐方式
+        'quote',  // 引用
+        'image',  // 插入图片
+        'undo',  // 撤销
+        'redo'  // 重复
+    ]
+    editor.customConfig.zIndex = 0;
+    editor.customConfig.showLinkImg = false;
+    editor.customConfig.pasteFilterStyle = false;
+    editor.customConfig.uploadImgMaxSize = 10 * 1024 * 1024;
+    editor.customConfig.uploadFileName = 'file';
+    editor.customConfig.uploadImgServer = '/uploadFile';
+    editor.customConfig.uploadImgHooks = {
+        customInsert: function (insertImg, result, editor) {
+            // 上传成功回调事件，插入图片
+            insertImg(result.filePath);
+        }
+    }
+    editor.create();
+
+    layui.use(['carousel', 'form', 'element'], function () {
+        var carousel = layui.carousel,
+            form = layui.form,
+            element = layui.element;
+
+        //图片轮播
+        carousel.render({
+            elem: '#test10'
+            , width: '100%'
+            , height: '380px'
+            , interval: 3000
+        });
+
+        // 答题
+        form.on('submit(add)', function (formData) {
+            var editorText = editor.txt.text();
+            if (editorText.length <= 0 && editorText == '') {
+                layer.msg('请先输入内容');
+                return true;
+            }
+            var stuHomework = formData.field;
+            stuHomework.content = editor.txt.html();
+            Ax.rest("/student/homework/sumbit", stuHomework, function (data) {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    area: ['355px', '140px'],
+                    content: $('#dialog'),
+                    cancel: function (index, layero) {
+                        location.reload();
+                    }
+                });
+            })
+        });
+    });
+</script>
+</html>

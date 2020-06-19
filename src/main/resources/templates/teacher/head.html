@@ -1,0 +1,24 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- th:fragment 定义需要引入的代码块，该div包含的内容即为引用的公共内容 -->
+<div th:fragment="myfooter">
+    <div class="footer" th:if="${session.user != null}">
+        <div class="layui-header">
+            <div class="layui-logo">作业管理系统</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;" th:text="${session.user.name}"></a>
+                </li>
+                <li class="layui-nav-item"><a href="/login.out">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer" th:if="${session.user == null}">
+        <div class="layui-header">
+            <div class="layui-logo">作业管理系统</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item"><a href="/login.html">登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</html>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.JavaEE.homework.mapper.StuHomeworkMapper">
+  <resultMap id="BaseResultMap" type="com.JavaEE.homework.entity.StuHomework">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="homework_id" jdbcType="INTEGER" property="homeworkId" />
+    <result column="is_correct" jdbcType="BIT" property="isCorrect" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <resultMap id="ResultMap" extends="BaseResultMap" type="com.JavaEE.homework.entity.StuHomework">
+    <association property="homework" javaType="com.JavaEE.homework.entity.Homework">
+      <result column="title" jdbcType="VARCHAR" property="title"/>
+      <result column="issue_time" jdbcType="TIMESTAMP" property="issueTime"/>
+      <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    </association>
+    <association property="teacher" javaType="com.JavaEE.homework.entity.Teacher">
+      <result column="t_name" jdbcType="VARCHAR" property="name"/>
+    </association>
+    <association property="student" javaType="com.JavaEE.homework.entity.Student">
+      <result column="s_name" jdbcType="VARCHAR" property="name"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, student_id, homework_id, is_correct, score, comment, content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from stu_homework
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from stu_homework
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.JavaEE.homework.entity.StuHomework">
+    insert into stu_homework (id, student_id, homework_id, 
+      is_correct, score, comment, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{homeworkId,jdbcType=INTEGER}, 
+      #{isCorrect,jdbcType=BIT}, #{score,jdbcType=INTEGER}, #{comment,jdbcType=VARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.JavaEE.homework.entity.StuHomework">
+    insert into stu_homework
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="studentId != null">
+        student_id,
+      </if>
+      <if test="homeworkId != null">
+        homework_id,
+      </if>
+      <if test="isCorrect != null">
+        is_correct,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="comment != null">
+        comment,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="studentId != null">
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="homeworkId != null">
+        #{homeworkId,jdbcType=INTEGER},
+      </if>
+      <if test="isCorrect != null">
+        #{isCorrect,jdbcType=BIT},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.JavaEE.homework.entity.StuHomework">
+    update stu_homework
+    <set>
+      <if test="studentId != null">
+        student_id = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="homeworkId != null">
+        homework_id = #{homeworkId,jdbcType=INTEGER},
+      </if>
+      <if test="isCorrect != null">
+        is_correct = #{isCorrect,jdbcType=BIT},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.JavaEE.homework.entity.StuHomework">
+    update stu_homework
+    set student_id = #{studentId,jdbcType=INTEGER},
+      homework_id = #{homeworkId,jdbcType=INTEGER},
+      is_correct = #{isCorrect,jdbcType=BIT},
+      score = #{score,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.JavaEE.homework.entity.StuHomework">
+    update stu_homework
+    set student_id = #{studentId,jdbcType=INTEGER},
+      homework_id = #{homeworkId,jdbcType=INTEGER},
+      is_correct = #{isCorrect,jdbcType=BIT},
+      score = #{score,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectPaging" resultMap="ResultMap">
+    select
+    t1.*, t2.*, t3.name as t_name, t4.name as s_name
+    from stu_homework t1, homework t2, teacher t3, student t4
+    where t1.homework_id = t2.id
+    and t2.teacher_id = t3.id
+    and t1.student_id = t4.id
+    and t1.is_correct = #{isCorrect,jdbcType=BIT}
+    order by t1.id desc
+    limit #{page}, #{limit}
+  </select>
+  <select id="tatolCount" resultType="java.lang.Integer">
+    select count(*) from stu_homework
+    where is_correct = #{isCorrect,jdbcType=BIT}
+  </select>
+  <select id="selectByStudentId" resultMap="ResultMap">
+    select
+    t1.*, t2.*, t3.name as t_name, t4.name as s_name
+    from stu_homework t1, homework t2, teacher t3, student t4
+    where t1.homework_id = t2.id
+    and t2.teacher_id = t3.id
+    and t1.student_id = t4.id
+    and t1.student_id = #{studentId}
+    order by t1.id desc
+  </select>
+  <select id="selectById" resultMap="ResultMap">
+    select
+    t1.*, t2.*, t3.name as t_name, t4.name as s_name
+    from stu_homework t1, homework t2, teacher t3, student t4
+    where t1.homework_id = t2.id
+    and t2.teacher_id = t3.id
+    and t1.student_id = t4.id
+    and t1.id = #{id}
+  </select>
+</mapper>

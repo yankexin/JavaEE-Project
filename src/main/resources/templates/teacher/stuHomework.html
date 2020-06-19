@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>批改作业</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+    <style>
+        .content {
+            padding: 15px;
+        }
+
+        i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+<nav class="layui-layout layui-layout-admin">
+    <div th:replace="/teacher/head :: myfooter"></div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree">
+                <li class="layui-nav-item">
+                    <a href="/teacher/homework.html"><i class="layui-icon">&#xe66f;</i>作业管理</a>
+                </li>
+                <li class="layui-nav-item layui-this">
+                    <a href="/teacher/homework/0.html"><i class="layui-icon">&#xe663;</i>批改作业</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div class="content">
+            <table class="layui-hide" id="test" lay-filter="test"></table>
+
+            <script type="text/html" id="toolbarDemo" th:if="${isCorrect == true}">
+                <div class="layui-btn-container">
+                    <a class="layui-btn layui-btn-primary layui-btn-sm" href="/teacher/homework/0.html">
+                        待批改
+                    </a>
+                    <a class="layui-btn layui-btn-sm" href="/teacher/homework/1.html">
+                        已批改
+                    </a>
+                </div>
+            </script>
+
+            <script type="text/html" id="toolbarDemo" th:if="${isCorrect == false}">
+                <div class="layui-btn-container">
+                    <a class="layui-btn layui-btn-sm" href="/teacher/homework/0.html">
+                        待批改
+                    </a>
+                    <a class="layui-btn layui-btn-primary layui-btn-sm" href="/teacher/homework/1.html">
+                        已批改
+                    </a>
+                </div>
+            </script>
+
+            <script type="text/html" id="barDemo" th:if="${isCorrect == true}">
+                <a class="layui-btn layui-btn-xs" lay-event="item">查看</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+
+            <script type="text/html" id="barDemo" th:if="${isCorrect == false}">
+                <a class="layui-btn layui-btn-xs" lay-event="correct">批改</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+        </div>
+    </div>
+
+    <div th:replace="/teacher/bottom :: myfooter"></div>
+</nav>
+
+</body>
+
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/axquery.js"></script>
+<script type="text/javascript" src="/layui/layui.all.js"></script>
+
+<script>
+    layui.use(['form', 'table'], function () {
+        var table = layui.table,
+            form = layui.form;
+
+        table.render({
+            elem: '#test'
+            , url: '/teacher/homework/correct/data'
+            , toolbar: '#toolbarDemo'
+            , title: '批改作业数据表'
+            , where: {
+                isCorrect: [(${isCorrect})]
+            }
+            , cols: [
+                [
+                    {field: 'id', title: '批改编号', width: 130, fixed: 'left', sort: true},
+                    {
+                        field: 'studentName', title: '提交学生', width: 150, templet: function (data) {
+                            return data.student.name;
+                        }
+                    },
+                    {
+                        field: 'title', title: '作业标题', templet: function (data) {
+                            return data.homework.title;
+                        }
+                    },
+                    {
+                        field: 'teacherName', title: '发布者', width: 150, templet: function (data) {
+                            return data.teacher.name;
+                        }
+                    },
+                    {
+                        field: 'issueTime', title: '发布时间', width: 190, templet: function (data) {
+                            return data.homework.issueTime;
+                        }
+                    },
+                    {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 120}
+                ]
+            ]
+            , page: true
+        });
+
+        // 监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么？', function (index) {
+                    Ax.rest("/teacher/stuHomework/delete", data.id, function (data) {
+                        obj.del();
+                        layer.close(index);
+                        layer.msg("删除成功");
+                    })
+                });
+            } else if (obj.event === 'correct') {
+                location.href = "/teacher/homework/correct/" + data.id + ".html";
+            } else if (obj.event === 'item') {
+                location.href = "/teacher/homework/correct/item/" + data.id + ".html";
+            }
+        });
+
+    });
+</script>
+</html>

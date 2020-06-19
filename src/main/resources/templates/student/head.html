@@ -1,0 +1,70 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="myfooter">
+    <div class="layui-nav layui-bg-green top-item">
+        <div class="layui-container">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="layui-header layui-bg-green" style="margin: auto;">
+                        <div class="layui-logo">
+                            <h4 style="text-align: left">
+                                <a href="/index.html" style="color: #ffffff;">首页</a>
+                            </h4>
+                        </div>
+                        <ul class="layui-nav layui-layout-right" th:if="${session.user != null}">
+                            <li class="layui-nav-item" style="margin-right: 50px;width: 300px; position: relative">
+                                <div class="layui-form" style="margin-top: 10px">
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block" style="margin-left: 0px">
+                                            <input type="text" name="search" required lay-verify="required"
+                                                   placeholder="请输入您想搜索的作业"
+                                                   autocomplete="off" class="layui-input search">
+                                        </div>
+                                    </div>
+                                    <button class="layui-btn layui-btn-primary"
+                                            style="position: absolute; top: 10px; right: 0px"
+                                            onclick="search()">搜索
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="layui-nav-item">
+                                <a href="/student/homework/my.html">我的作业</a>
+                            </li>
+                            <li class="layui-nav-item"><a href="#" th:text="${session.user.name}"></a></li>
+                            <li class="layui-nav-item">
+                                <a href="/login.out">退出</a>
+                            </li>
+                        </ul>
+                        <ul class="layui-nav layui-layout-right" th:if="${session.user == null}">
+                            <li class="layui-nav-item" style="margin-right: 50px;width: 300px; position: relative">
+                                <div class="layui-form" style="margin-top: 10px">
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block" style="margin-left: 0px">
+                                            <input type="text" name="search" required lay-verify="required"
+                                                   placeholder="请输入您想搜索的试卷标题"
+                                                   autocomplete="off" class="layui-input search">
+                                        </div>
+                                    </div>
+                                    <button class="layui-btn layui-btn-primary"
+                                            style="position: absolute; top: 10px; right: 0px"
+                                            onclick="search()">搜索
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="layui-nav-item"><a href="/login.html">登录</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function search() {
+            if ($('.search').val() == '') {
+                alert('请先输入搜索内容');
+            } else {
+                location.href = "/search.html?search=" + $('.search').val();
+            }
+        }
+    </script>
+</div>

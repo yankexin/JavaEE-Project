@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>批改作业详情</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+    <style>
+        i {
+            margin-right: 10px;
+        }
+        .item-label{
+            padding: 0px 10px;
+        }
+        h2{
+            padding-left: 10px;
+            padding-bottom:5px;
+        }
+        .tt {
+            color: #797676;
+            margin-top: 10px;
+            position: relative;
+            border-bottom: 1px solid #e2e2e2;
+            padding-bottom: 15px;
+        }
+        .content{
+            padding: 10px;
+            margin-top: 10px;
+            min-height: 150px;
+        }
+        blockquote {
+            display: block;
+            border-left: 8px solid #d0e5f2;
+            padding: 5px 10px;
+            margin: 10px 0;
+            line-height: 1.4;
+            font-size: 100%;
+            background-color: #f1f1f1;
+        }
+        .content p {
+
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+<nav class="layui-layout layui-layout-admin">
+    <div th:replace="/teacher/head :: myfooter"></div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree">
+                <li class="layui-nav-item">
+                    <a href="/teacher/homework.html"><i class="layui-icon">&#xe66f;</i>作业管理</a>
+                </li>
+                <li class="layui-nav-item layui-this">
+                    <a href="/teacher/homework/0.html"><i class="layui-icon">&#xe663;</i>批改作业</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div class="layui-container">
+            <div class="layui-row">
+                <div class="layui-col-md12" style="padding: 0px 150px">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px; color: #009E94">
+                        <legend style="color: #009E94">作业详情</legend>
+                    </fieldset>
+
+                    <h2>
+                        <i class="layui-icon">&#xe66e;</i><label th:text="${stuHomework.homework.title}"></label>
+                    </h2>
+                    <div class="tt">
+                        <label class="item-label" style="border-right: 1px solid #797676"
+                               th:text="'发布者：' + ${stuHomework.teacher.name}">
+                        </label>
+                        <label class="item-label"
+                               th:text="'发布时间：' + ${#dates.format(stuHomework.homework.issueTime, 'yyyy-MM-dd HH:mm')}">
+                        </label>
+                </div>
+                <div class="content" th:utext="${stuHomework.homework.content}"></div>
+            </div>
+                <div class="layui-col-md12" style="padding: 0px 150px">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px; color: #009E94">
+                        <legend style="color: #009E94">提交内容</legend>
+                    </fieldset>
+
+                    <div class="tt">
+                        <label class="item-label"
+                               th:text="'提交学生：' + ${stuHomework.student.name}">
+                        </label>
+                    </div>
+                    <div class="content" th:utext="${stuHomework.content}"></div>
+                </div>
+                <div class="layui-col-md12" style="padding: 0px 150px">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px; color: #009E94">
+                        <legend style="color: #009E94">批改作业内容</legend>
+                    </fieldset>
+
+                    <div class="tt">
+                        <label class="item-label"
+                               th:text="'分数：' + ${stuHomework.score}">
+                        </label>
+                    </div>
+                    <div class="content" th:utext="'评语：' + ${stuHomework.comment}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div id="dialog" style="padding: 30px; display: none; text-align: center;">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header" style="color: #444">作业已批改</div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/axquery.js"></script>
+<script type="text/javascript" src="/layui/layui.all.js"></script>
+
+<script>
+    layui.use(['element', 'layer', 'form'], function () {
+        var layer = layui.layer,
+            form = layui.form,
+            element = layui.element;
+
+        // 发布
+        form.on('submit(add)', function (formData) {
+            var stuHomework = formData.field;
+            stuHomework.isCorrect = true;
+            Ax.rest("/teacher//homework/correct", stuHomework, function (data) {
+                layer.open({
+                    type: 1,
+                    title: false,
+                    area: ['355px', '140px'],
+                    content: $('#dialog'),
+                    cancel: function (index, layero) {
+                        location.href = "/teacher/homework/0.html"
+                    }
+                });
+            })
+        });
+    });
+</script>
+</html>
